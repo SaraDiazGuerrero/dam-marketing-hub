@@ -654,6 +654,119 @@
   }
 }
 
+/* --- Redimensionamiento de imágenes --- */
+.image-resize-tool {
+  padding: 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.image-resize-header h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.image-resize-header p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.image-resize-body {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .image-resize-body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+}
+
+.image-resize-preview {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.image-resize-thumb {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.image-resize-info p {
+  margin: 0 0 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.image-resize-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.image-resize-controls select {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+
+.image-resize-hint,
+.image-resize-error {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+}
+
+.image-resize-hint {
+  color: var(--text-secondary);
+}
+
+.image-resize-error {
+  color: var(--danger, #c0392b);
+}
+
+.image-resize-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.btn-secondary {
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ============================================
    Utilidades para pasos futuros (galería, detalle)
    ============================================ */

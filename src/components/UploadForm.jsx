@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CATEGORIES } from '../constants/categories'
 import { getFirestoreErrorMessage, uploadAsset } from '../services/assetService'
+import ImageResizeTool from './ImageResizeTool'
 
 const EMPTY_FORM = {
   nombre: '',
@@ -18,6 +19,7 @@ export default function UploadForm({ user, onUploadSuccess }) {
   const [loading, setLoading] = useState(false)
   const [notification, setNotification] = useState(null)
   const [fileInputKey, setFileInputKey] = useState(0)
+  const [imageFile, setImageFile] = useState(null)
 
   function clearNotification() {
     setNotification(null)
@@ -25,6 +27,7 @@ export default function UploadForm({ user, onUploadSuccess }) {
 
   function resetForm() {
     setFile(null)
+    setImageFile(null)
     setNombre(EMPTY_FORM.nombre)
     setDescripcion(EMPTY_FORM.descripcion)
     setCategoria(EMPTY_FORM.categoria)
@@ -35,12 +38,17 @@ export default function UploadForm({ user, onUploadSuccess }) {
   function handleFileChange(event) {
     const selected = event.target.files[0]
     setFile(selected)
+    setImageFile(selected?.type?.startsWith('image/') ? selected : null)
     clearNotification()
 
     if (selected && !nombre) {
       const nameWithoutExt = selected.name.replace(/\.[^/.]+$/, '')
       setNombre(nameWithoutExt)
     }
+  }
+
+  function handleResizedFile(resizedFile) {
+    setFile(resizedFile)
   }
 
   function parseEtiquetas(texto) {
@@ -140,6 +148,14 @@ export default function UploadForm({ user, onUploadSuccess }) {
               required
             />
           </label>
+
+          {imageFile && (
+            <ImageResizeTool
+              file={imageFile}
+              onFileReady={handleResizedFile}
+              disabled={loading}
+            />
+          )}
 
           <label>
             Nombre *
