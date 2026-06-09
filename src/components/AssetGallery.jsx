@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CATEGORIES } from '../constants/categories'
-import { getAssets, getFirestoreErrorMessage } from '../services/assetService'
+import { getAssetErrorMessage, getAssets } from '../services/assetService'
 import AssetCard from './AssetCard'
 
 export default function AssetGallery({ refreshKey = 0, onSelectAsset }) {
@@ -21,7 +21,7 @@ export default function AssetGallery({ refreshKey = 0, onSelectAsset }) {
         setAssets(data.filter((a) => a.estado !== 'archivado'))
       } catch (err) {
         console.error('Error al cargar activos:', err)
-        setError(getFirestoreErrorMessage(err))
+        setError(getAssetErrorMessage(err))
       } finally {
         setLoading(false)
       }
@@ -100,9 +100,7 @@ export default function AssetGallery({ refreshKey = 0, onSelectAsset }) {
 
       {!loading && !error && filteredAssets.length === 0 && (
         <p className="gallery-message">
-          {assets.length === 0
-            ? 'No hay activos en Firestore. Si ves archivos en Storage, los metadatos no se guardaron. Desactiva el bloqueador de anuncios en localhost y vuelve a subir.'
-            : 'No hay resultados para tu búsqueda.'}
+          {assets.length === 0 ? 'No hay activos.' : 'No hay resultados para tu búsqueda.'}
         </p>
       )}
 

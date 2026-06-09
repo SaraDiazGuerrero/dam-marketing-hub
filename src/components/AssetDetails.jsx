@@ -78,19 +78,10 @@ export default function AssetDetails({ asset, onBack, onUpdated }) {
       })
     } catch (err) {
       console.error('generateShareInfo error:', err)
-      const code = err?.code || ''
-      let message = 'No se pudo generar la información de distribución.'
-
-      if (code === 'functions/unauthenticated') {
-        message = 'Debes iniciar sesión para usar la Cloud Function.'
-      } else if (code === 'functions/internal' || code === 'internal') {
-        message =
-          'Error interno al llamar la Function. Vuelve a desplegar con invoker público o desactiva el bloqueador de anuncios.'
-      } else if (err?.message) {
-        message = err.message
-      }
-
-      setNotification({ type: 'error', message })
+      setNotification({
+        type: 'error',
+        message: 'No se pudo generar la información de distribución. Intenta de nuevo.',
+      })
     } finally {
       setShareLoading(false)
     }

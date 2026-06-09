@@ -145,12 +145,12 @@ export function formatFileSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-export function getFirestoreErrorMessage(error) {
+export function getAssetErrorMessage(error) {
   if (error?.message === 'FIRESTORE_TIMEOUT') {
-    return 'Firestore no respondió. Desactiva el bloqueador de anuncios en localhost y verifica que Firestore Database esté creada.'
+    return 'No se pudo completar la operación. Intenta de nuevo.'
   }
   if (error?.archivoEnStorage) {
-    return 'El archivo se subió a Storage, pero los metadatos no se guardaron en Firestore. Revisa el bloqueador de anuncios.'
+    return 'No se pudo completar la subida. Intenta de nuevo.'
   }
-  return 'No se pudo conectar con Firestore. Desactiva extensiones que bloqueen Google (uBlock, AdBlock).'
+  return 'Ocurrió un error. Intenta de nuevo.'
 }

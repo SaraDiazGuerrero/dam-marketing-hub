@@ -101,7 +101,7 @@ export default function ImageResizeTool({ file, onFileReady, disabled }) {
       onFileReady?.(resized.file)
     } catch (err) {
       console.error('Error al redimensionar:', err)
-      setError('No se pudo redimensionar la imagen. Usa la original.')
+      setError('No se pudo redimensionar la imagen.')
       onFileReady?.(file)
     } finally {
       setLoading(false)

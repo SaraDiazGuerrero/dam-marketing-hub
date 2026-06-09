@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { CATEGORIES } from '../constants/categories'
-import { getFirestoreErrorMessage, uploadAsset } from '../services/assetService'
+import { getAssetErrorMessage, uploadAsset } from '../services/assetService'
 import ImageResizeTool from './ImageResizeTool'
 
 const EMPTY_FORM = {
@@ -96,7 +96,7 @@ export default function UploadForm({ user, onUploadSuccess }) {
       setNotification({
         type: 'error',
         title: 'Error al subir',
-        message: getFirestoreErrorMessage(err),
+        message: getAssetErrorMessage(err),
       })
     } finally {
       setLoading(false)
