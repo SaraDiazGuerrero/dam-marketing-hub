@@ -1,0 +1,16 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Archivos del DAM en assets/{userId}/...
+    match /assets/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Denegar acceso a cualquier otra ruta
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
