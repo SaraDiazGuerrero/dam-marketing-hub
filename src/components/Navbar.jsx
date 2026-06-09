@@ -8,11 +8,18 @@ export default function Navbar({ user }) {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <h1>DAM Marketing Hub</h1>
-        <span>Gestión de activos digitales</span>
+        <div className="navbar-logo" aria-hidden="true">
+          DAM
+        </div>
+        <div className="navbar-brand-text">
+          <h1>Marketing Hub</h1>
+          <span>Gestión de activos digitales</span>
+        </div>
       </div>
       <div className="navbar-user">
-        <span>{user.email}</span>
+        <span className="navbar-email" title={user.email}>
+          {user.email}
+        </span>
         <button type="button" className="btn-secondary" onClick={handleLogout}>
           Cerrar sesión
         </button>

@@ -1,18 +1,21 @@
 import Navbar from '../components/Navbar'
+import UploadForm from '../components/UploadForm'
 
 export default function DashboardPage({ user }) {
   return (
     <div className="dashboard">
       <Navbar user={user} />
-      <main className="dashboard-main">
-        <h2>Bienvenido al panel</h2>
-        <p>
-          Hola, <strong>{user.email}</strong>. Aquí podrás subir y organizar
-          activos digitales.
+      <main className="dashboard-main page-container">
+        <header className="page-header">
+          <h2>Panel de control</h2>
+          <p>Gestiona y organiza los activos digitales de tu agencia.</p>
+        </header>
+
+        <p className="dashboard-welcome">
+          Hola, <strong>{user.email}</strong>
         </p>
-        <p className="dashboard-hint">
-          Próximo paso: formulario de carga de archivos (Paso 4).
-        </p>
+
+        <UploadForm user={user} />
       </main>
     </div>
   )
