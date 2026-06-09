@@ -3,7 +3,7 @@ import { CATEGORIES } from '../constants/categories'
 import { getAssets, getFirestoreErrorMessage } from '../services/assetService'
 import AssetCard from './AssetCard'
 
-export default function AssetGallery({ refreshKey = 0 }) {
+export default function AssetGallery({ refreshKey = 0, onSelectAsset }) {
   const [assets, setAssets] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -109,7 +109,12 @@ export default function AssetGallery({ refreshKey = 0 }) {
       {!loading && filteredAssets.length > 0 && viewMode === 'grid' && (
         <div className="grid-gallery">
           {filteredAssets.map((asset) => (
-            <AssetCard key={asset.id} asset={asset} variant="grid" />
+            <AssetCard
+              key={asset.id}
+              asset={asset}
+              variant="grid"
+              onClick={onSelectAsset}
+            />
           ))}
         </div>
       )}
@@ -117,7 +122,12 @@ export default function AssetGallery({ refreshKey = 0 }) {
       {!loading && filteredAssets.length > 0 && viewMode === 'list' && (
         <div className="list-gallery">
           {filteredAssets.map((asset) => (
-            <AssetCard key={asset.id} asset={asset} variant="list" />
+            <AssetCard
+              key={asset.id}
+              asset={asset}
+              variant="list"
+              onClick={onSelectAsset}
+            />
           ))}
         </div>
       )}

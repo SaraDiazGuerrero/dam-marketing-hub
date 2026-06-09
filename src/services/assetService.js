@@ -1,5 +1,13 @@
-import { addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore'
+import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { db, storage } from './firebase'
 
 const ASSETS_COLLECTION = 'assets'
@@ -102,6 +110,32 @@ export async function getAssets() {
     const dateB = b.fechaCarga?.seconds || 0
     return dateB - dateA
   })
+}
+
+
+export async function updateAsset(id, { nombre, descripcion, categoria, etiquetas }) {
+  await updateDoc(doc(db, ASSETS_COLLECTION, id), {
+    nombre,
+    descripcion,
+    categoria,
+    etiquetas,
+    fechaActualizacion: serverTimestamp(),
+  })
+}
+
+
+export async function archiveAsset(id) {
+  await updateDoc(doc(db, ASSETS_COLLECTION, id), {
+    estado: 'archivado',
+    fechaActualizacion: serverTimestamp(),
+  })
+}
+
+export async function deleteAsset(id, storagePath) {
+  if (storagePath) {
+    await deleteObject(ref(storage, storagePath))
+  }
+  await deleteDoc(doc(db, ASSETS_COLLECTION, id))
 }
 
 /** Formatea el tamaño del archivo en KB o MB */
