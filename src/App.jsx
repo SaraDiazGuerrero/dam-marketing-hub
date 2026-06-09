@@ -1,28 +1,27 @@
-import app, { isFirebaseConfigured } from './services/firebase'
+import { useEffect, useState } from 'react'
+import { subscribeToAuthChanges } from './services/authService'
+import LoginPage from './pages/LoginPage'
+import DashboardPage from './pages/DashboardPage'
 import './App.css'
 
 function App() {
-  return (
-    <div className="app">
-      <header className="app-header">
-        <h1>DAM Marketing Hub</h1>
-        <p>Sistema de gestión de activos digitales</p>
-      </header>
-      <main className="app-main">
-        {isFirebaseConfigured ? (
-          <p>
-            Firebase conectado al proyecto:{' '}
-            <strong>{app.options.projectId}</strong>
-          </p>
-        ) : (
-          <p>
-            Crea el archivo <code>.env</code> a partir de <code>.env.example</code>{' '}
-            y reinicia el servidor de desarrollo.
-          </p>
-        )}
-      </main>
-    </div>
-  )
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const unsubscribe = subscribeToAuthChanges((currentUser) => {
+      setUser(currentUser)
+      setLoading(false)
+    })
+
+    return unsubscribe
+  }, [])
+
+  if (loading) {
+    return <div className="app-loading">Cargando...</div>
+  }
+
+  return user ? <DashboardPage user={user} /> : <LoginPage />
 }
 
 export default App
