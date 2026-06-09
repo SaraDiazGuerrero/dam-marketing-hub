@@ -5,6 +5,7 @@ import {
   formatFileSize,
   updateAsset,
 } from '../services/assetService'
+import { generateShareInfo } from '../services/shareService'
 import AssetEditor from './AssetEditor'
 
 function formatDate(timestamp) {
@@ -48,13 +49,50 @@ export default function AssetDetails({ asset, onBack, onUpdated }) {
   const [loading, setLoading] = useState(false)
   const [notification, setNotification] = useState(null)
   const [currentAsset, setCurrentAsset] = useState(asset)
+  const [shareInfo, setShareInfo] = useState(null)
+  const [shareLoading, setShareLoading] = useState(false)
+
+  async function copyText(text, successMessage) {
+    try {
+      await navigator.clipboard.writeText(text)
+      setNotification({ type: 'success', message: successMessage })
+    } catch {
+      setNotification({ type: 'error', message: 'No se pudo copiar al portapapeles.' })
+    }
+  }
 
   async function handleCopyLink() {
+    await copyText(currentAsset.url, 'Enlace copiado al portapapeles.')
+  }
+
+  async function handleGenerateShare() {
+    setShareLoading(true)
+    setNotification(null)
+
     try {
-      await navigator.clipboard.writeText(currentAsset.url)
-      setNotification({ type: 'success', message: 'Enlace copiado al portapapeles.' })
-    } catch {
-      setNotification({ type: 'error', message: 'No se pudo copiar el enlace.' })
+      const info = await generateShareInfo(currentAsset)
+      setShareInfo(info)
+      setNotification({
+        type: 'success',
+        message: 'Información de distribución generada por Firebase Function.',
+      })
+    } catch (err) {
+      console.error('generateShareInfo error:', err)
+      const code = err?.code || ''
+      let message = 'No se pudo generar la información de distribución.'
+
+      if (code === 'functions/unauthenticated') {
+        message = 'Debes iniciar sesión para usar la Cloud Function.'
+      } else if (code === 'functions/internal' || code === 'internal') {
+        message =
+          'Error interno al llamar la Function. Vuelve a desplegar con invoker público o desactiva el bloqueador de anuncios.'
+      } else if (err?.message) {
+        message = err.message
+      }
+
+      setNotification({ type: 'error', message })
+    } finally {
+      setShareLoading(false)
     }
   }
 
@@ -196,6 +234,14 @@ export default function AssetDetails({ asset, onBack, onUpdated }) {
                 <button
                   type="button"
                   className="btn-secondary"
+                  onClick={handleGenerateShare}
+                  disabled={loading || shareLoading}
+                >
+                  {shareLoading ? 'Generando...' : 'Generar enlace de distribución'}
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary"
                   onClick={() => setEditing(true)}
                   disabled={loading}
                 >
@@ -218,6 +264,44 @@ export default function AssetDetails({ asset, onBack, onUpdated }) {
                   Eliminar
                 </button>
               </div>
+
+              {shareInfo && (
+                <div className="share-info-panel">
+                  <h3>Distribución (Firebase Function)</h3>
+                  <p className="share-info-text">{shareInfo.shareText}</p>
+
+                  {shareInfo.normalizedTags?.length > 0 && (
+                    <div className="asset-card-tags">
+                      {shareInfo.normalizedTags.map((tag) => (
+                        <span key={tag} className="asset-tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="share-info-actions">
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => copyText(shareInfo.downloadUrl, 'Enlace de descarga copiado.')}
+                    >
+                      Copiar enlace de descarga
+                    </button>
+                    {shareInfo.embedHtml && (
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        onClick={() =>
+                          copyText(shareInfo.embedHtml, 'Código de inserción copiado.')
+                        }
+                      >
+                        Copiar código de inserción
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>

@@ -1145,6 +1145,33 @@
   margin-top: 1.5rem;
 }
 
+.share-info-panel {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.share-info-panel h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.share-info-text {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.share-info-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
 .asset-editor {
   display: flex;
   flex-direction: column;
