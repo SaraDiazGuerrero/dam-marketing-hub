@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CATEGORIES } from '../constants/categories'
-import { getAssets } from '../services/assetService'
+import { getAssets, getFirestoreErrorMessage } from '../services/assetService'
 import AssetCard from './AssetCard'
 
 export default function AssetGallery({ refreshKey = 0 }) {
@@ -9,6 +9,7 @@ export default function AssetGallery({ refreshKey = 0 }) {
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [categoria, setCategoria] = useState('')
+  const [viewMode, setViewMode] = useState('grid')
 
   useEffect(() => {
     async function loadAssets() {
@@ -20,7 +21,7 @@ export default function AssetGallery({ refreshKey = 0 }) {
         setAssets(data.filter((a) => a.estado !== 'archivado'))
       } catch (err) {
         console.error('Error al cargar activos:', err)
-        setError('No se pudieron cargar los activos.')
+        setError(getFirestoreErrorMessage(err))
       } finally {
         setLoading(false)
       }
@@ -74,6 +75,24 @@ export default function AssetGallery({ refreshKey = 0 }) {
             </option>
           ))}
         </select>
+        <div className="view-toggle">
+          <button
+            type="button"
+            className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+            onClick={() => setViewMode('grid')}
+            aria-pressed={viewMode === 'grid'}
+          >
+            Galería
+          </button>
+          <button
+            type="button"
+            className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+            onClick={() => setViewMode('list')}
+            aria-pressed={viewMode === 'list'}
+          >
+            Lista
+          </button>
+        </div>
       </div>
 
       {loading && <p className="gallery-message">Cargando activos...</p>}
@@ -82,15 +101,23 @@ export default function AssetGallery({ refreshKey = 0 }) {
       {!loading && !error && filteredAssets.length === 0 && (
         <p className="gallery-message">
           {assets.length === 0
-            ? 'Aún no hay activos. Sube el primero con el formulario de arriba.'
+            ? 'No hay activos en Firestore. Si ves archivos en Storage, los metadatos no se guardaron. Desactiva el bloqueador de anuncios en localhost y vuelve a subir.'
             : 'No hay resultados para tu búsqueda.'}
         </p>
       )}
 
-      {!loading && filteredAssets.length > 0 && (
+      {!loading && filteredAssets.length > 0 && viewMode === 'grid' && (
         <div className="grid-gallery">
           {filteredAssets.map((asset) => (
-            <AssetCard key={asset.id} asset={asset} />
+            <AssetCard key={asset.id} asset={asset} variant="grid" />
+          ))}
+        </div>
+      )}
+
+      {!loading && filteredAssets.length > 0 && viewMode === 'list' && (
+        <div className="list-gallery">
+          {filteredAssets.map((asset) => (
+            <AssetCard key={asset.id} asset={asset} variant="list" />
           ))}
         </div>
       )}

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { CATEGORIES } from '../constants/categories'
-import { uploadAsset } from '../services/assetService'
+import { getFirestoreErrorMessage, uploadAsset } from '../services/assetService'
 
 const EMPTY_FORM = {
   nombre: '',
@@ -88,7 +88,7 @@ export default function UploadForm({ user, onUploadSuccess }) {
       setNotification({
         type: 'error',
         title: 'Error al subir',
-        message: 'No se pudo completar la subida. Intenta de nuevo.',
+        message: getFirestoreErrorMessage(err),
       })
     } finally {
       setLoading(false)

@@ -1,24 +1,64 @@
-export default function AssetCard({ asset, onClick }) {
+import { formatFileSize } from '../services/assetService'
+
+function AssetPreview({ asset }) {
   const isImage = asset.tipoArchivo?.startsWith('image/')
   const isVideo = asset.tipoArchivo?.startsWith('video/')
+
+  if (isImage) {
+    return <img src={asset.url} alt={asset.nombre} loading="lazy" />
+  }
+  if (isVideo) {
+    return <div className="asset-card-placeholder">🎬 Video</div>
+  }
+  return <div className="asset-card-placeholder">📄 Documento</div>
+}
+
+export default function AssetCard({ asset, variant = 'grid', onClick }) {
+  const tags = asset.etiquetas || []
+
+  if (variant === 'list') {
+    return (
+      <article
+        className="asset-card asset-card--list"
+        onClick={() => onClick?.(asset)}
+      >
+        <div className="asset-card-preview asset-card-preview--list">
+          <AssetPreview asset={asset} />
+        </div>
+        <div className="asset-card-body asset-card-body--list">
+          <div className="asset-list-main">
+            <h3>{asset.nombre}</h3>
+            <p className="asset-list-meta">
+              {asset.categoria} · {formatFileSize(asset.tamañoArchivo)}
+              {asset.dimensiones &&
+                ` · ${asset.dimensiones.ancho}×${asset.dimensiones.alto}px`}
+            </p>
+          </div>
+          {tags.length > 0 && (
+            <div className="asset-card-tags">
+              {tags.map((tag) => (
+                <span key={tag} className="asset-tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </article>
+    )
+  }
 
   return (
     <article className="asset-card" onClick={() => onClick?.(asset)}>
       <div className="asset-card-preview">
-        {isImage ? (
-          <img src={asset.url} alt={asset.nombre} loading="lazy" />
-        ) : isVideo ? (
-          <div className="asset-card-placeholder">🎬 Video</div>
-        ) : (
-          <div className="asset-card-placeholder">📄 Documento</div>
-        )}
+        <AssetPreview asset={asset} />
       </div>
       <div className="asset-card-body">
         <h3>{asset.nombre}</h3>
         <span className="asset-card-category">{asset.categoria}</span>
-        {asset.etiquetas?.length > 0 && (
+        {tags.length > 0 && (
           <div className="asset-card-tags">
-            {asset.etiquetas.map((tag) => (
+            {tags.map((tag) => (
               <span key={tag} className="asset-tag">
                 {tag}
               </span>

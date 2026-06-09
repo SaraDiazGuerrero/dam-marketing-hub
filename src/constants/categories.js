@@ -6,6 +6,7 @@ export const CATEGORIES = [
   'Documentos',
   'Videos',
   'Campañas',
+  'Otros',
 ]
 
 /** Estados posibles de un activo */
