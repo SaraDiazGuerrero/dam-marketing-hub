@@ -1,4 +1,4 @@
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { db, storage } from './firebase'
 
@@ -28,4 +28,20 @@ export async function uploadAsset({ file, nombre, descripcion, categoria, etique
   })
 
   return { id: docRef.id, nombre, url, storagePath }
+}
+
+/** Obtiene todos los activos desde Firestore, ordenados por fecha */
+export async function getAssets() {
+  const snapshot = await getDocs(collection(db, ASSETS_COLLECTION))
+
+  const assets = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }))
+
+  return assets.sort((a, b) => {
+    const dateA = a.fechaCarga?.seconds || 0
+    const dateB = b.fechaCarga?.seconds || 0
+    return dateB - dateA
+  })
 }

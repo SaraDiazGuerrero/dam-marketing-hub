@@ -9,7 +9,7 @@ const EMPTY_FORM = {
   etiquetasTexto: '',
 }
 
-export default function UploadForm({ user }) {
+export default function UploadForm({ user, onUploadSuccess }) {
   const [file, setFile] = useState(null)
   const [nombre, setNombre] = useState(EMPTY_FORM.nombre)
   const [descripcion, setDescripcion] = useState(EMPTY_FORM.descripcion)
@@ -82,6 +82,7 @@ export default function UploadForm({ user }) {
         detail: `ID: ${result.id}`,
       })
       resetForm()
+      onUploadSuccess?.()
     } catch (err) {
       console.error('Error al subir:', err)
       setNotification({

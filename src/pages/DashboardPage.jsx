@@ -1,7 +1,15 @@
+import { useState } from 'react'
+import AssetGallery from '../components/AssetGallery'
 import Navbar from '../components/Navbar'
 import UploadForm from '../components/UploadForm'
 
 export default function DashboardPage({ user }) {
+  const [galleryKey, setGalleryKey] = useState(0)
+
+  function handleUploadSuccess() {
+    setGalleryKey((k) => k + 1)
+  }
+
   return (
     <div className="dashboard">
       <Navbar user={user} />
@@ -15,7 +23,9 @@ export default function DashboardPage({ user }) {
           Hola, <strong>{user.email}</strong>
         </p>
 
-        <UploadForm user={user} />
+        <UploadForm user={user} onUploadSuccess={handleUploadSuccess} />
+
+        <AssetGallery refreshKey={galleryKey} />
       </main>
     </div>
   )
