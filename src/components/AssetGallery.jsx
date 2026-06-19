@@ -40,7 +40,11 @@ export default function AssetGallery({ refreshKey = 0, onSelectAsset }) {
         !term ||
         asset.nombre?.toLowerCase().includes(term) ||
         asset.descripcion?.toLowerCase().includes(term) ||
-        asset.etiquetas?.some((tag) => tag.toLowerCase().includes(term))
+        asset.etiquetas?.some((tag) => tag.toLowerCase().includes(term)) ||
+        asset.subcategoria?.toLowerCase().includes(term) ||
+        asset.copyright?.toLowerCase().includes(term) ||
+        asset.procedencia?.toLowerCase().includes(term) ||
+        asset.usoRecomendado?.toLowerCase().includes(term)
 
       return matchCategory && matchSearch
     })

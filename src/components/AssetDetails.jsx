@@ -208,6 +208,61 @@ export default function AssetDetails({ asset, onBack, onUpdated }) {
                   <dt>Estado</dt>
                   <dd>{currentAsset.estado || 'activo'}</dd>
                 </div>
+
+                {currentAsset.subcategoria && (
+                  <div>
+                    <dt>Subcategoría</dt>
+                    <dd>{currentAsset.subcategoria}</dd>
+                  </div>
+                )}
+                {currentAsset.tipoActivo && (
+                  <div>
+                    <dt>Tipo de activo</dt>
+                    <dd>{currentAsset.tipoActivo}</dd>
+                  </div>
+                )}
+                {currentAsset.estadoRevision && (
+                  <div>
+                    <dt>Estado de revisión</dt>
+                    <dd>{currentAsset.estadoRevision}</dd>
+                  </div>
+                )}
+                {currentAsset.importanciaLegal != null && (
+                  <div>
+                    <dt>Importancia legal</dt>
+                    <dd>{currentAsset.importanciaLegal} / 5</dd>
+                  </div>
+                )}
+                {currentAsset.riesgoDispersionLocal != null && (
+                  <div>
+                    <dt>Riesgo de dispersión</dt>
+                    <dd>{currentAsset.riesgoDispersionLocal} / 5</dd>
+                  </div>
+                )}
+                {currentAsset.prioridadCustodia != null && (
+                  <div>
+                    <dt>Prioridad de custodia</dt>
+                    <dd>{currentAsset.prioridadCustodia}</dd>
+                  </div>
+                )}
+                {currentAsset.copyright && (
+                  <div>
+                    <dt>Copyright</dt>
+                    <dd>{currentAsset.copyright}</dd>
+                  </div>
+                )}
+                {currentAsset.procedencia && (
+                  <div>
+                    <dt>Procedencia</dt>
+                    <dd>{currentAsset.procedencia}</dd>
+                  </div>
+                )}
+                {currentAsset.usoRecomendado && (
+                  <div>
+                    <dt>Uso recomendado</dt>
+                    <dd>{currentAsset.usoRecomendado}</dd>
+                  </div>
+                )}
               </dl>
 
               <div className="asset-details-actions">

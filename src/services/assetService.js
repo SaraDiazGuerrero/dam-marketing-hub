@@ -53,7 +53,23 @@ function getImageDimensions(file) {
   })
 }
 
-export async function uploadAsset({ file, nombre, descripcion, categoria, etiquetas, userId }) {
+export async function uploadAsset({
+  file,
+  nombre,
+  descripcion,
+  categoria,
+  etiquetas,
+  userId,
+  subcategoria = '',
+  tipoActivo = 'Producto final',
+  copyright = '',
+  usoRecomendado = '',
+  procedencia = '',
+  importanciaLegal = 3,
+  riesgoDispersionLocal = 3,
+  prioridadCustodia = 0,
+  estadoRevision = 'En revisión',
+}) {
   const timestamp = Date.now()
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
   const storagePath = `assets/${userId}/${timestamp}_${safeName}`
@@ -82,6 +98,15 @@ export async function uploadAsset({ file, nombre, descripcion, categoria, etique
         tamañoArchivo: file.size,
         nombreOriginal: file.name,
         dimensiones,
+        subcategoria,
+        tipoActivo,
+        copyright,
+        usoRecomendado,
+        procedencia,
+        importanciaLegal: Number(importanciaLegal),
+        riesgoDispersionLocal: Number(riesgoDispersionLocal),
+        prioridadCustodia: Number(prioridadCustodia),
+        estadoRevision,
       }),
       FIRESTORE_TIMEOUT_MS
     )
@@ -113,12 +138,38 @@ export async function getAssets() {
 }
 
 
-export async function updateAsset(id, { nombre, descripcion, categoria, etiquetas }) {
+export async function updateAsset(
+  id,
+  {
+    nombre,
+    descripcion,
+    categoria,
+    etiquetas,
+    subcategoria,
+    tipoActivo,
+    copyright,
+    usoRecomendado,
+    procedencia,
+    importanciaLegal,
+    riesgoDispersionLocal,
+    prioridadCustodia,
+    estadoRevision,
+  }
+) {
   await updateDoc(doc(db, ASSETS_COLLECTION, id), {
     nombre,
     descripcion,
     categoria,
     etiquetas,
+    subcategoria: subcategoria ?? '',
+    tipoActivo: tipoActivo ?? 'Producto final',
+    copyright: copyright ?? '',
+    usoRecomendado: usoRecomendado ?? '',
+    procedencia: procedencia ?? '',
+    importanciaLegal: Number(importanciaLegal) || 0,
+    riesgoDispersionLocal: Number(riesgoDispersionLocal) || 0,
+    prioridadCustodia: Number(prioridadCustodia) || 0,
+    estadoRevision: estadoRevision ?? 'En revisión',
     fechaActualizacion: serverTimestamp(),
   })
 }

@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { CATEGORIES } from '../constants/categories'
+import {
+  ASSET_TYPES,
+  CATEGORIES,
+  REVISION_STATES,
+  SCALE_1_5,
+  calcularPrioridadCustodia,
+  getSubcategories,
+} from '../constants/categories'
 import { getAssetErrorMessage, uploadAsset } from '../services/assetService'
 import ImageResizeTool from './ImageResizeTool'
 
@@ -8,6 +15,14 @@ const EMPTY_FORM = {
   descripcion: '',
   categoria: CATEGORIES[0],
   etiquetasTexto: '',
+  subcategoria: '',
+  tipoActivo: ASSET_TYPES[0],
+  copyright: '',
+  usoRecomendado: '',
+  procedencia: '',
+  importanciaLegal: 3,
+  riesgoDispersionLocal: 3,
+  estadoRevision: REVISION_STATES[0],
 }
 
 export default function UploadForm({ user, onUploadSuccess }) {
@@ -21,6 +36,23 @@ export default function UploadForm({ user, onUploadSuccess }) {
   const [fileInputKey, setFileInputKey] = useState(0)
   const [imageFile, setImageFile] = useState(null)
 
+  const [subcategoria, setSubcategoria] = useState(EMPTY_FORM.subcategoria)
+  const [tipoActivo, setTipoActivo] = useState(EMPTY_FORM.tipoActivo)
+  const [copyright, setCopyright] = useState(EMPTY_FORM.copyright)
+  const [usoRecomendado, setUsoRecomendado] = useState(EMPTY_FORM.usoRecomendado)
+  const [procedencia, setProcedencia] = useState(EMPTY_FORM.procedencia)
+  const [importanciaLegal, setImportanciaLegal] = useState(EMPTY_FORM.importanciaLegal)
+  const [riesgoDispersionLocal, setRiesgoDispersionLocal] = useState(
+    EMPTY_FORM.riesgoDispersionLocal
+  )
+  const [estadoRevision, setEstadoRevision] = useState(EMPTY_FORM.estadoRevision)
+
+  const subcategoriasDisponibles = getSubcategories(categoria)
+  const prioridadCustodia = calcularPrioridadCustodia(
+    importanciaLegal,
+    riesgoDispersionLocal
+  )
+
   function clearNotification() {
     setNotification(null)
   }
@@ -33,6 +65,19 @@ export default function UploadForm({ user, onUploadSuccess }) {
     setCategoria(EMPTY_FORM.categoria)
     setEtiquetasTexto(EMPTY_FORM.etiquetasTexto)
     setFileInputKey((k) => k + 1)
+    setSubcategoria(EMPTY_FORM.subcategoria)
+    setTipoActivo(EMPTY_FORM.tipoActivo)
+    setCopyright(EMPTY_FORM.copyright)
+    setUsoRecomendado(EMPTY_FORM.usoRecomendado)
+    setProcedencia(EMPTY_FORM.procedencia)
+    setImportanciaLegal(EMPTY_FORM.importanciaLegal)
+    setRiesgoDispersionLocal(EMPTY_FORM.riesgoDispersionLocal)
+    setEstadoRevision(EMPTY_FORM.estadoRevision)
+  }
+
+  function handleCategoriaChange(nuevaCategoria) {
+    setCategoria(nuevaCategoria)
+    setSubcategoria('')
   }
 
   function handleFileChange(event) {
@@ -81,6 +126,15 @@ export default function UploadForm({ user, onUploadSuccess }) {
         categoria,
         etiquetas: parseEtiquetas(etiquetasTexto),
         userId: user.uid,
+        subcategoria,
+        tipoActivo,
+        copyright,
+        usoRecomendado,
+        procedencia,
+        importanciaLegal,
+        riesgoDispersionLocal,
+        prioridadCustodia,
+        estadoRevision,
       })
 
       setNotification({
@@ -173,12 +227,28 @@ export default function UploadForm({ user, onUploadSuccess }) {
             Categoría *
             <select
               value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
+              onChange={(e) => handleCategoriaChange(e.target.value)}
               disabled={loading}
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Subcategoría
+            <select
+              value={subcategoria}
+              onChange={(e) => setSubcategoria(e.target.value)}
+              disabled={loading || subcategoriasDisponibles.length === 0}
+            >
+              <option value="">Sin subcategoría</option>
+              {subcategoriasDisponibles.map((sub) => (
+                <option key={sub} value={sub}>
+                  {sub}
                 </option>
               ))}
             </select>
@@ -202,6 +272,109 @@ export default function UploadForm({ user, onUploadSuccess }) {
               value={etiquetasTexto}
               onChange={(e) => setEtiquetasTexto(e.target.value)}
               placeholder="instagram, verano, promo (separadas por coma)"
+              disabled={loading}
+            />
+          </label>
+
+          <div className="span-full form-section-divider">
+            <h3>Derechos de uso y custodia</h3>
+          </div>
+
+          <label>
+            Tipo de activo
+            <select
+              value={tipoActivo}
+              onChange={(e) => setTipoActivo(e.target.value)}
+              disabled={loading}
+            >
+              {ASSET_TYPES.map((tipo) => (
+                <option key={tipo} value={tipo}>
+                  {tipo}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Estado de revisión
+            <select
+              value={estadoRevision}
+              onChange={(e) => setEstadoRevision(e.target.value)}
+              disabled={loading}
+            >
+              {REVISION_STATES.map((estadoR) => (
+                <option key={estadoR} value={estadoR}>
+                  {estadoR}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Importancia legal (1-5)
+            <select
+              value={importanciaLegal}
+              onChange={(e) => setImportanciaLegal(Number(e.target.value))}
+              disabled={loading}
+            >
+              {SCALE_1_5.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Riesgo de dispersión local (1-5)
+            <select
+              value={riesgoDispersionLocal}
+              onChange={(e) => setRiesgoDispersionLocal(Number(e.target.value))}
+              disabled={loading}
+            >
+              {SCALE_1_5.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="span-full priority-display">
+            <span>Prioridad de custodia (calculada):</span>
+            <strong>{prioridadCustodia}</strong>
+            <small>= importancia legal × 0.6 + riesgo de dispersión × 0.4</small>
+          </div>
+
+          <label>
+            Copyright
+            <input
+              type="text"
+              value={copyright}
+              onChange={(e) => setCopyright(e.target.value)}
+              placeholder="Ej: © 2026 Agencia, uso interno"
+              disabled={loading}
+            />
+          </label>
+
+          <label>
+            Procedencia
+            <input
+              type="text"
+              value={procedencia}
+              onChange={(e) => setProcedencia(e.target.value)}
+              placeholder="Ej: Banco de imágenes, autor, cliente"
+              disabled={loading}
+            />
+          </label>
+
+          <label className="span-full">
+            Uso recomendado
+            <textarea
+              value={usoRecomendado}
+              onChange={(e) => setUsoRecomendado(e.target.value)}
+              placeholder="Ej: Redes sociales, no usar en impresión"
+              rows={2}
               disabled={loading}
             />
           </label>

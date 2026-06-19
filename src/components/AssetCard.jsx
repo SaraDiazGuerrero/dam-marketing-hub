@@ -16,6 +16,28 @@ function AssetPreview({ asset }) {
 export default function AssetCard({ asset, variant = 'grid', onClick }) {
   const tags = asset.etiquetas || []
 
+  const badges = (
+    <div className="asset-card-badges">
+      <span className="asset-card-category">{asset.categoria}</span>
+      {asset.subcategoria && (
+        <span className="asset-badge asset-badge--sub">{asset.subcategoria}</span>
+      )}
+      {asset.tipoActivo && (
+        <span className="asset-badge">{asset.tipoActivo}</span>
+      )}
+      {asset.estadoRevision && (
+        <span className="asset-badge asset-badge--revision">
+          {asset.estadoRevision}
+        </span>
+      )}
+      {asset.prioridadCustodia != null && (
+        <span className="asset-badge asset-badge--priority">
+          Custodia: {asset.prioridadCustodia}
+        </span>
+      )}
+    </div>
+  )
+
   if (variant === 'list') {
     return (
       <article
@@ -33,6 +55,7 @@ export default function AssetCard({ asset, variant = 'grid', onClick }) {
               {asset.dimensiones &&
                 ` · ${asset.dimensiones.ancho}×${asset.dimensiones.alto}px`}
             </p>
+            {badges}
           </div>
           {tags.length > 0 && (
             <div className="asset-card-tags">
@@ -55,7 +78,7 @@ export default function AssetCard({ asset, variant = 'grid', onClick }) {
       </div>
       <div className="asset-card-body">
         <h3>{asset.nombre}</h3>
-        <span className="asset-card-category">{asset.categoria}</span>
+        {badges}
         {tags.length > 0 && (
           <div className="asset-card-tags">
             {tags.map((tag) => (
